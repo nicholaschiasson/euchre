@@ -20,6 +20,7 @@ class Card:
         Diamond = "♦"
         Heart = "♥"
         Spade = "♠"
+        Color = { Club: "Black", Spade: "Black", Diamond: "Red", Heart: "Red" }
 
     def __init__(self, rank, suit):
         self.rank = rank
