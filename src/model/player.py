@@ -1,3 +1,4 @@
+from ai.search.game_playing import *
 from model.card import Card
 from model.card_stack import CardStack
 
