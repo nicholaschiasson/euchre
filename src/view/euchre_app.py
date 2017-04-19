@@ -99,22 +99,38 @@ class EuchreApp(Tk):
 
     def update_player_hand(self, player, player_num):
         if player_num == 0:
+            for c in self.btnPlayer1Cards:
+                c.config(text="")
+                c.grid_remove()
             for i, c in enumerate(player.hand.cards):
+                self.btnPlayer1Cards[i].grid()
                 self.btnPlayer1Cards[i].config(text=str(c.rank) + str(c.suit))
         elif player_num == 1:
+            for c in self.btnPlayer2Cards:
+                c.config(text="")
+                c.grid_remove()
             for i, c in enumerate(player.hand.cards):
+                self.btnPlayer2Cards[i].grid()
                 if self.user_player:
                     self.btnPlayer2Cards[i].config(text="???")
                 else:
                     self.btnPlayer2Cards[i].config(text=str(c.rank) + str(c.suit))
         elif player_num == 2:
+            for c in self.btnPlayer3Cards:
+                c.config(text="")
+                c.grid_remove()
             for i, c in enumerate(player.hand.cards):
+                self.btnPlayer3Cards[i].grid()
                 if self.user_player:
                     self.btnPlayer3Cards[i].config(text="???")
                 else:
                     self.btnPlayer3Cards[i].config(text=str(c.rank) + str(c.suit))
         elif player_num == 3:
+            for c in self.btnPlayer4Cards:
+                c.config(text="")
+                c.grid_remove()
             for i, c in enumerate(player.hand.cards):
+                self.btnPlayer4Cards[i].grid()
                 if self.user_player:
                     self.btnPlayer4Cards[i].config(text="???")
                 else:
@@ -150,3 +166,6 @@ class EuchreApp(Tk):
 
     def update_current_player(self, player_num):
         self.lblCurrentPlayer.config(text="Current Player: " + str(player_num))
+
+    def player_play_card(self, player, player_num, card):
+        self.update_player_hand(player, player_num)

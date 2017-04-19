@@ -7,6 +7,9 @@ class Player:
         self.is_dealer = False
         self.hand_priorities = []
 
+    def choose_card(self):
+        pass
+
     def deal_card(self, card):
         self.hand.place_card(card)
 

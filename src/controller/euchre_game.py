@@ -72,15 +72,19 @@ class Euchre:
         self.view.after(1000, self.next_turn)
 
     def player_choose_card(self, player, card):
-        self.view.deactivate_player_turn(self.players[self.current_turn % len(self.players)], self.current_turn % len(self.players))
+        p_ind = self.current_turn % len(self.players)
+        self.view.deactivate_player_turn(self.players[p_ind], p_ind)
+        self.view.player_play_card(self.players[p_ind], p_ind, self.players[p_ind].take_card(card))
         self.view.after(1000, self.next_turn)
 
     def next_turn(self):
         self.current_turn += 1
-        self.view.update_current_player(str(self.current_turn % len(self.players) + 1))
-        if self.user_player and (self.current_turn % len(self.players) == 0):
+        p_ind = self.current_turn % len(self.players)
+        self.view.update_current_player(str(p_ind + 1))
+        if self.user_player and (p_ind == 0):
             self.view.activate_player_turn(self.players[0], 0)
         else:
+            self.view.player_play_card(self.players[p_ind], p_ind, self.players[p_ind].choose_card())
             self.view.after(1000, self.next_turn)
 
     def run(self):
