@@ -94,6 +94,7 @@ class Euchre:
         self.current_turn = (self.current_turn + 1) % len(self.players)
         self.turns_left_in_round = (self.turns_left_in_round - 1) % len(self.players)
         self.view.update_current_player(str(self.current_turn + 1))
+        self.players[self.current_turn].update_valid_cards(self.round_suit)
         if self.user_player and (self.current_turn == 0):
             self.view.activate_player_turn(self.players[0], 0)
         else:

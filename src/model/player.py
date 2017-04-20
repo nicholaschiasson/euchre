@@ -9,9 +9,9 @@ class Player:
         self.is_dealer = False
         self.points = 0
         self.search_alg = alphabeta
+        self.valid_cards = []
 
     def choose_card(self):
-        card_ind = len(self.hand.cards) - 1
         return self.take_card(len(self.hand.cards) - 1)
 
     def deal_card(self, card):
@@ -37,3 +37,11 @@ class Player:
         card = self.hand.cards[card_index]
         del self.hand.cards[card_index]
         return card
+
+    def update_valid_cards(self, round_suit):
+        self.valid_cards = []
+        for c in self.hand.cards:
+            self.valid_cards.append(c.suit == round_suit)
+        if not all(self.valid_cards):
+            for i in range(len(self.valid_cards)):
+                self.valid_cards[i] = True

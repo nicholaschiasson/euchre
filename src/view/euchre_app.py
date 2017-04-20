@@ -186,16 +186,20 @@ class EuchreApp(Tk):
     def activate_player_turn(self, player, player_num):
         if player_num == 0:
             for i, c in enumerate(player.hand.cards):
-                self.btnPlayer1Cards[i].config(state="enabled")
+                if player.valid_cards[i]:
+                    self.btnPlayer1Cards[i].config(state="enabled")
         elif player_num == 1:
             for i, c in enumerate(player.hand.cards):
-                self.btnPlayer2Cards[i].config(state="enabled")
+                if player.valid_cards[i]:
+                    self.btnPlayer2Cards[i].config(state="enabled")
         elif player_num == 2:
             for i, c in enumerate(player.hand.cards):
-                self.btnPlayer3Cards[i].config(state="enabled")
+                if player.valid_cards[i]:
+                    self.btnPlayer3Cards[i].config(state="enabled")
         elif player_num == 3:
             for i, c in enumerate(player.hand.cards):
-                self.btnPlayer4Cards[i].config(state="enabled")
+                if player.valid_cards[i]:
+                    self.btnPlayer4Cards[i].config(state="enabled")
 
     def deactivate_player_turn(self, player, player_num):
         if player_num == 0:
