@@ -1,6 +1,7 @@
 import time
 import random
 
+from ai.search.game_playing import *
 from model.card import Card
 from model.card_stack import CardStack
 from model.player import Player
@@ -16,6 +17,8 @@ class Euchre:
         self.players = []
         for i in range(4):
             self.players.append(Player())
+        self.players[1].search_alg = paranoid_alphabeta
+        self.players[3].search_alg = paranoid_alphabeta
         self.dealer = random.randrange(4)
         self.trump = ""
         self.round_suit = ""

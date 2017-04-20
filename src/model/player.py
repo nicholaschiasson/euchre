@@ -16,7 +16,7 @@ class Player:
         state = EuchreState(current_player, [p.hand.cards[:] for p in players], [p.valid_cards[:] for p in players], [p.points for p in players], cards_in_play[:], trump_suit, round_suit)
         highest_state = (float("-inf"), state)
         for s in state.get_adjacent_states():
-            v = alphabeta(s, lambda st: self.heuristic(st), 16)
+            v = self.search_alg(s, lambda st: self.heuristic(st), 12)
             if v >= highest_state[0]:
                 highest_state = (v, s)
         for i, c in enumerate(self.hand.cards):

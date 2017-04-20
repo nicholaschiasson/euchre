@@ -1,5 +1,7 @@
 from tkinter import Tk, BOTH, W, N, E, S
-from tkinter.ttk import Frame, Button, Label, Style
+from tkinter.ttk import Frame, Button, Label
+
+from model.card import Card
 
 class EuchreApp(Tk):
     def __init__(self, title, controller, user_player):
@@ -17,9 +19,6 @@ class EuchreApp(Tk):
         self.w.rowconfigure(7, weight=1)
         self.w.rowconfigure(8, weight=1)
         self.w.rowconfigure(11, weight=1)
-
-        Style().configure("playerhand.TButton", background="white")
-        Style().configure("otherhand.TButton", background=("#888888" if user_player else "white"))
 
         self.lblTitle = Label(self.w, text="Euchre")
         self.lblTitle.grid(row=0, column=5, columnspan=5)
@@ -54,7 +53,7 @@ class EuchreApp(Tk):
         self.lblPlayer1Points.grid(row=10, column=5, columnspan=5)
         self.btnPlayer1Cards = []
         for i in range(5):
-            self.btnPlayer1Cards.append(Button(self.w, command=player_choose_card_callback_factory(0, i), state="disabled", style="playerhand.TButton"))
+            self.btnPlayer1Cards.append(Button(self.w, command=player_choose_card_callback_factory(0, i), state="disabled"))
             self.btnPlayer1Cards[i].grid(row=11, column=5+i, sticky=N+S+E+W)
 
         # Player 2 hand
@@ -64,7 +63,7 @@ class EuchreApp(Tk):
         self.lblPlayer2Points.grid(row=5, column=0, columnspan=5)
         self.btnPlayer2Cards = []
         for i in range(5):
-            self.btnPlayer2Cards.append(Button(self.w, command=player_choose_card_callback_factory(1, i), state="disabled", style="otherhand.TButton"))
+            self.btnPlayer2Cards.append(Button(self.w, command=player_choose_card_callback_factory(1, i), state="disabled"))
             self.btnPlayer2Cards[i].grid(row=6, column=0+i, rowspan=3, sticky=N+S+E+W)
 
         # Player 3 hand
@@ -74,7 +73,7 @@ class EuchreApp(Tk):
         self.lblPlayer3Points.grid(row=2, column=5, columnspan=5)
         self.btnPlayer3Cards = []
         for i in range(5):
-            self.btnPlayer3Cards.append(Button(self.w, command=player_choose_card_callback_factory(2, i), state="disabled", style="otherhand.TButton"))
+            self.btnPlayer3Cards.append(Button(self.w, command=player_choose_card_callback_factory(2, i), state="disabled"))
             self.btnPlayer3Cards[i].grid(row=3, column=5+i, sticky=N+S+E+W)
 
         # Player 4 hand
@@ -84,7 +83,7 @@ class EuchreApp(Tk):
         self.lblPlayer4Points.grid(row=5, column=10, columnspan=5)
         self.btnPlayer4Cards = []
         for i in range(5):
-            self.btnPlayer4Cards.append(Button(self.w, command=player_choose_card_callback_factory(3, i), state="disabled", style="otherhand.TButton"))
+            self.btnPlayer4Cards.append(Button(self.w, command=player_choose_card_callback_factory(3, i), state="disabled"))
             self.btnPlayer4Cards[i].grid(row=6, column=10+i, rowspan=3, sticky=N+S+E+W)
 
     def centerWindow(self):
