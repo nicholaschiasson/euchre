@@ -4,6 +4,7 @@ import random
 from ai.search.game_playing import *
 from model.card import Card
 from model.card_stack import CardStack
+from model.euchre_state import EuchreState
 from model.player import Player
 from view.euchre_app import EuchreApp
 
@@ -18,7 +19,9 @@ class Euchre:
         for i in range(4):
             self.players.append(Player())
         self.players[1].search_alg = paranoid_alphabeta
+        self.players[1].heuristic = lambda st:EuchreState.paranoid_heuristic(st)
         self.players[3].search_alg = paranoid_alphabeta
+        self.players[3].heuristic = lambda st:EuchreState.paranoid_heuristic(st)
         self.dealer = random.randrange(4)
         self.trump = ""
         self.round_suit = ""

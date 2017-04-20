@@ -7,6 +7,7 @@ class Player:
     def __init__(self):
         self.hand = CardStack([])
         self.hand_priorities = []
+        self.heuristic = lambda st:EuchreState.team_heuristic(st)
         self.is_dealer = False
         self.points = 0
         self.search_alg = alphabeta
@@ -16,7 +17,7 @@ class Player:
         state = EuchreState(current_player, [p.hand.cards[:] for p in players], [p.valid_cards[:] for p in players], [p.points for p in players], cards_in_play[:], trump_suit, round_suit)
         highest_state = (float("-inf"), state)
         for s in state.get_adjacent_states():
-            v = self.search_alg(s, lambda st: self.heuristic(st), 12)
+            v = self.search_alg(s, self.heuristic, 12)
             if v >= highest_state[0]:
                 highest_state = (v, s)
         for i, c in enumerate(self.hand.cards):
@@ -30,15 +31,6 @@ class Player:
 
     def empty_hand(self):
         self.hand = CardStack([])
-
-    def heuristic(self, state):
-        state_ind = (state.current_player - 1) % len(state.player_hands)
-        score = 0
-        score += state.player_points[state_ind]
-        score += state.player_points[(state_ind + 2) % len(state.player_hands)]
-        score -= state.player_points[(state_ind + 1) % len(state.player_hands)]
-        score -= state.player_points[(state_ind + 3) % len(state.player_hands)]
-        return score
 
     def order_up(self, trump):
         self.prioritize_hand(trump.suit)

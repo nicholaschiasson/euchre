@@ -29,3 +29,23 @@ class EuchreState:
                     new_state.player_points[winner_ind] += 1
                 adj_states.append(new_state)
         return adj_states
+
+    @staticmethod
+    def team_heuristic(state):
+        state_ind = (state.current_player - 1) % len(state.player_hands)
+        score = 0
+        score += state.player_points[state_ind]
+        score += state.player_points[(state_ind + 2) % len(state.player_hands)]
+        score -= state.player_points[(state_ind + 1) % len(state.player_hands)]
+        score -= state.player_points[(state_ind + 3) % len(state.player_hands)]
+        return score
+
+    @staticmethod
+    def paranoid_heuristic(state):
+        state_ind = (state.current_player - 1) % len(state.player_hands)
+        score = 0
+        score += state.player_points[state_ind]
+        score -= state.player_points[(state_ind + 2) % len(state.player_hands)]
+        score -= state.player_points[(state_ind + 1) % len(state.player_hands)]
+        score -= state.player_points[(state_ind + 3) % len(state.player_hands)]
+        return score
