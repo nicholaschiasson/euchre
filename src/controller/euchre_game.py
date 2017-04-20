@@ -17,13 +17,19 @@ class Euchre:
         for i in range(4):
             self.players.append(Player())
         self.dealer = random.randrange(4)
+        self.trump = ""
+        self.round_suit = ""
         self.current_turn = self.dealer
+        self.turns_left_in_round = 0
+        self.cards_in_play = [0, 0, 0, 0]
         self.restart_trick()
 
     def restart_trick(self):
         self.dealer += 1
         self.current_turn = self.dealer
         for i, p in enumerate(self.players):
+            p.empty_hand()
+            p.points = 0
             p.set_dealer(i == self.dealer % len(self.players))
         self.deck = CardStack([])
         self.deck.place_card(Card.NineOfClubs)
@@ -54,8 +60,10 @@ class Euchre:
         self.view.restart_trick(self.dealer)
 
     def deal(self):
-        for i in range(4):
-            self.players[(self.dealer + i + 1) % len(self.players)].empty_hand()
+        self.turns_left_in_round = 0
+        for p in self.players:
+            p.empty_hand()
+            p.points = 0
         for i in range(4):
             for j in range(random.randrange(2, 4)):
                 self.players[(self.dealer + i + 1) % len(self.players)].deal_card(self.deck.take_card())
@@ -72,19 +80,40 @@ class Euchre:
         self.view.after(1000, self.next_turn)
 
     def player_choose_card(self, player, card):
-        p_ind = self.current_turn % len(self.players)
-        self.view.deactivate_player_turn(self.players[p_ind], p_ind)
-        self.view.player_play_card(self.players[p_ind], p_ind, self.players[p_ind].take_card(card))
-        self.view.after(1000, self.next_turn)
+        self.view.deactivate_player_turn(self.players[self.current_turn], self.current_turn)
+        chosen_card = self.players[self.current_turn].take_card(card)
+        value = Card.get_card_value(chosen_card, self.trump, self.round_suit)
+        self.end_turn(self.players[self.current_turn], self.current_turn, chosen_card, value)
 
     def next_turn(self):
-        self.current_turn += 1
-        p_ind = self.current_turn % len(self.players)
-        self.view.update_current_player(str(p_ind + 1))
-        if self.user_player and (p_ind == 0):
+        if self.turns_left_in_round < 1:
+            for c in range(len(self.cards_in_play)):
+                c = 0
+            self.view.new_round()
+            self.round_suit = ""
+        self.current_turn = (self.current_turn + 1) % len(self.players)
+        self.turns_left_in_round = (self.turns_left_in_round - 1) % len(self.players)
+        self.view.update_current_player(str(self.current_turn + 1))
+        if self.user_player and (self.current_turn == 0):
             self.view.activate_player_turn(self.players[0], 0)
         else:
-            self.view.player_play_card(self.players[p_ind], p_ind, self.players[p_ind].choose_card())
+            card = self.players[self.current_turn].choose_card()
+            value = Card.get_card_value(card, self.trump, self.round_suit)
+            self.end_turn(self.players[self.current_turn], self.current_turn, card, value)
+
+    def end_turn(self, player, player_num, card, card_value):
+        self.cards_in_play[player_num] = card_value
+        if self.round_suit == "":
+            self.round_suit = card.suit
+        self.view.player_play_card(player, player_num, card)
+        if self.turns_left_in_round < 1 and all(self.cards_in_play):
+            winner_ind = self.cards_in_play.index(max(self.cards_in_play))
+            self.current_turn = winner_ind - 1
+            self.players[winner_ind].points += 1
+            self.view.update_player_points(self.players[winner_ind], winner_ind)
+        if self.turns_left_in_round < 1 and len(player.hand.cards) < 1:
+            self.view.game_over()
+        else:
             self.view.after(1000, self.next_turn)
 
     def run(self):

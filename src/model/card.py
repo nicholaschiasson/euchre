@@ -49,6 +49,19 @@ class Card:
     def __hash__(self):
         return hash(tuple(sorted(self.__dict__.items())))
 
+    @staticmethod
+    def get_card_value(card, trump_suit, round_suit = ""):
+        value = Card.Rank.Value[card.rank]
+        if card.suit == trump_suit:
+            value += 1000
+            if card.rank == Card.Rank.Jack:
+                value += 100000
+        elif Card.Suit.Color[card.suit] == Card.Suit.Color[trump_suit] and card.rank == Card.Rank.Jack:
+            value += 10000
+        if card.suit == round_suit:
+            value += 100
+        return value
+
 Card.TwoOfClubs = Card(Card.Rank.Nine, Card.Suit.Club)
 Card.TwoOfDiamonds = Card(Card.Rank.Nine, Card.Suit.Diamond)
 Card.TwoOfHearts = Card(Card.Rank.Nine, Card.Suit.Heart)
