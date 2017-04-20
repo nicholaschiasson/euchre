@@ -1,6 +1,7 @@
 from ai.search.game_playing import *
 from model.card import Card
 from model.card_stack import CardStack
+from model.euchre_state import EuchreState
 
 class Player:
     def __init__(self):
@@ -11,7 +12,17 @@ class Player:
         self.search_alg = alphabeta
         self.valid_cards = []
 
-    def choose_card(self):
+    def choose_card(self, trump_suit, round_suit, cards_in_play, players, current_player):
+        state = EuchreState(current_player, [p.hand.cards[:] for p in players], [p.valid_cards[:] for p in players], [p.points for p in players], cards_in_play[:], trump_suit, round_suit)
+        highest_state = (float("-inf"), state)
+        for s in state.get_adjacent_states():
+            v = alphabeta(s, lambda st: self.heuristic(st), 16)
+            if v >= highest_state[0]:
+                highest_state = (v, s)
+        for i, c in enumerate(self.hand.cards):
+            if c not in highest_state[1].player_hands[current_player]:
+                return self.take_card(i)
+        print("Something went wrong...")
         return self.take_card(len(self.hand.cards) - 1)
 
     def deal_card(self, card):
@@ -19,6 +30,15 @@ class Player:
 
     def empty_hand(self):
         self.hand = CardStack([])
+
+    def heuristic(self, state):
+        state_ind = (state.current_player - 1) % len(state.player_hands)
+        score = 0
+        score += state.player_points[state_ind]
+        score += state.player_points[(state_ind + 2) % len(state.player_hands)]
+        score -= state.player_points[(state_ind + 1) % len(state.player_hands)]
+        score -= state.player_points[(state_ind + 3) % len(state.player_hands)]
+        return score
 
     def order_up(self, trump):
         self.prioritize_hand(trump.suit)
@@ -42,6 +62,6 @@ class Player:
         self.valid_cards = []
         for c in self.hand.cards:
             self.valid_cards.append(c.suit == round_suit)
-        if not all(self.valid_cards):
+        if all(v == False for v in self.valid_cards):
             for i in range(len(self.valid_cards)):
                 self.valid_cards[i] = True

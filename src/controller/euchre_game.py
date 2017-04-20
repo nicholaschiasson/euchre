@@ -19,6 +19,7 @@ class Euchre:
         self.dealer = random.randrange(4)
         self.trump = ""
         self.round_suit = ""
+        self.used_cards = []
         self.current_turn = self.dealer
         self.turns_left_in_round = 0
         self.cards_in_play = [0, 0, 0, 0]
@@ -72,6 +73,7 @@ class Euchre:
                 self.players[(self.dealer + i + 1) % len(self.players)].deal_card(self.deck.take_card())
         trump_card = self.deck.take_card()
         self.trump = trump_card.suit
+        self.used_cards = []
         self.players[self.dealer % len(self.players)].order_up(trump_card)
         self.view.deal(self.trump)
         for i, p in enumerate(self.players):
@@ -87,23 +89,24 @@ class Euchre:
 
     def next_turn(self):
         if self.turns_left_in_round < 1:
-            for c in range(len(self.cards_in_play)):
-                c = 0
+            self.cards_in_play = [0, 0, 0, 0]
             self.view.new_round()
             self.round_suit = ""
         self.current_turn = (self.current_turn + 1) % len(self.players)
         self.turns_left_in_round = (self.turns_left_in_round - 1) % len(self.players)
         self.view.update_current_player(str(self.current_turn + 1))
-        self.players[self.current_turn].update_valid_cards(self.round_suit)
+        for p in self.players:
+            p.update_valid_cards(self.round_suit)
         if self.user_player and (self.current_turn == 0):
             self.view.activate_player_turn(self.players[0], 0)
         else:
-            card = self.players[self.current_turn].choose_card()
+            card = self.players[self.current_turn].choose_card(self.trump, self.round_suit, self.cards_in_play, self.players, self.current_turn)
             value = Card.get_card_value(card, self.trump, self.round_suit)
             self.end_turn(self.players[self.current_turn], self.current_turn, card, value)
 
     def end_turn(self, player, player_num, card, card_value):
         self.cards_in_play[player_num] = card_value
+        self.used_cards.append(card)
         if self.round_suit == "":
             self.round_suit = card.suit
         self.view.player_play_card(player, player_num, card)

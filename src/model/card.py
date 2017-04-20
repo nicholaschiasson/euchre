@@ -13,6 +13,7 @@ class Card:
         Queen = "Q"
         King = "K"
         Ace = "A"
+        Enum = [ Two, Three, Four, Five, Six, Seven, Eight, Nine, Ten, Jack, Queen, King, Ace ]
         Value = { Two: 2, Three: 3, Four: 4, Five: 5, Six: 6, Seven: 7, Eight: 8, Nine: 9, Ten: 10, Jack: 11, Queen: 12, King: 13, Ace: 14 }
 
     class Suit:
@@ -21,6 +22,7 @@ class Card:
         Heart = "♥"
         Spade = "♠"
         Color = { Club: "Black", Spade: "Black", Diamond: "Red", Heart: "Red" }
+        Enum = [ Club, Diamond, Heart, Spade ]
 
     def __init__(self, rank, suit):
         self.rank = rank
@@ -58,7 +60,7 @@ class Card:
                 value += 100000
         elif Card.Suit.Color[card.suit] == Card.Suit.Color[trump_suit] and card.rank == Card.Rank.Jack:
             value += 10000
-        if card.suit == round_suit:
+        if card.suit == round_suit or round_suit == "":
             value += 100
         return value
 
