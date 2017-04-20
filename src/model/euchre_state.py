@@ -19,6 +19,13 @@ class EuchreState:
                 if all(new_state.cards_in_play):
                     new_state.cards_in_play = [0, 0, 0, 0]
                     new_state.round_suit = card_taken.suit
+                    for j, h in enumerate(new_state.player_hands):
+                        new_state.player_valid_cards[j] = []
+                        for c in h:
+                            new_state.player_valid_cards[j].append(c.suit == new_state.round_suit)
+                        if all(v == False for v in new_state.player_valid_cards[j]):
+                            for k in range(len(new_state.player_valid_cards[j])):
+                                new_state.player_valid_cards[j][k] = True
                 new_state.cards_in_play[new_state.current_player] = Card.get_card_value(card_taken, new_state.trump_suit, new_state.round_suit)
                 del new_state.player_hands[new_state.current_player][i]
                 del new_state.player_valid_cards[new_state.current_player][i]
